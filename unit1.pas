@@ -15,6 +15,7 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
+    CheckBox1: TCheckBox;
     Edit1: TEdit;
     Edit2: TEdit;
     Edit3: TEdit;
@@ -28,6 +29,7 @@ type
     Label3: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
   public
@@ -45,13 +47,20 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  with image1.canvas do rectangle(-1,-1,513,513);
+  with image1.canvas do begin
+    brush.Style:=bssolid;
+    brush.color:=clwhite;
+    fillrect(0,0,512,512);
+    brush.color:=clblack;
+    if CheckBox1.Checked=true then fillrect(0,0,512,512);
+  end;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
   var
-  n,i,a,x,y,xa,xb,xc,ya,yb,yc{,r,g,b}: Integer;
+  n,i,a,x,y,xa,xb,xc,ya,yb,yc: Integer;
 begin
+  randomize;
   xa:=strtoint(Edit2.Text) or 0;
   ya:=strtoint(Edit3.Text) or 0;
   xb:=strtoint(Edit4.Text) or 0;
@@ -60,24 +69,27 @@ begin
   yc:=strtoint(Edit7.Text) or 0;
   x:=xa;
   y:=ya;
-{ r:=Random(256);
-  g:=Random(256);
-  b:=Random(256); }
-  randomize;
   n:=strtoint(Edit1.Text);
   with image1.canvas do begin
-    line(x,y,x+1,y+1);
     for i:=0 to n do begin
- {    pen.color:=(r,g,b);   doesn't work :/ }
+      if Checkbox1.Checked=true then begin
+        pen.color:=(strtoint(inttostr(random(256))+inttostr(random(256))+inttostr(random(256))));
+      end else pen.color:=clblack;
+      line(x,y,x+1,y+1);
       a:=random(3);
       case a of
-      0: begin x:=(x+xa)div 2; y:=(y+ya)div 2 end;
-      1: begin x:=(x+xb)div 2; y:=(y+yb)div 2 end;
-      2: begin x:=(x+xc)div 2; y:=(y+yc)div 2 end;
+        0:begin x:=(x+xa)div 2; y:=(y+ya)div 2 end;
+        1:begin x:=(x+xb)div 2; y:=(y+yb)div 2 end;
+        2:begin x:=(x+xc)div 2; y:=(y+yc)div 2 end;
       end;
       line(x,y,x+1,y+1);
     end;
   end;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  with image1.canvas do rectangle(-1,-1,513,513);
 end;
 
 end.
